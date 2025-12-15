@@ -4,12 +4,12 @@ import { ensureCurrentClinicId } from '@/lib/clinic';
 import { redirect } from 'next/navigation';
 
 type Category = { id: string; name: string };
-type Item = {
+type ItemRow = {
   id: string;
   name: string;
   unit: string;
   reorder_threshold: number;
-  category: Category | null;
+  category: Category | Category[] | null;
 };
 
 function toNumber(value: unknown): number {
@@ -41,11 +41,20 @@ export default async function DashboardPage() {
   const stockByItemId = new Map<string, number>();
   for (const row of stocks ?? []) stockByItemId.set(row.item_id as string, toNumber(row.stock));
 
-  const enrichedItems: Array<Item & { stock: number; isLow: boolean }> = (items ?? []).map((it) => {
+  const normalizeCategory = (value: ItemRow['category']): Category | null => {
+    if (!value) return null;
+    if (Array.isArray(value)) return (value[0] as Category) ?? null;
+    return value as Category;
+  };
+
+  const enrichedItems: Array<(Omit<ItemRow, 'category'> & { category: Category | null }) & { stock: number; isLow: boolean }> = (
+    items ?? []
+  ).map((it) => {
     const stock = stockByItemId.get(it.id as string) ?? 0;
     const threshold = toNumber(it.reorder_threshold);
     const isLow = threshold > 0 && stock <= threshold;
-    return { ...(it as Item), stock, isLow };
+    const category = normalizeCategory((it as ItemRow).category);
+    return { ...(it as Omit<ItemRow, 'category'>), category, stock, isLow };
   });
 
   const lowStock = enrichedItems.filter((i) => i.isLow).slice(0, 10);
@@ -157,4 +166,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-

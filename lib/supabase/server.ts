@@ -10,15 +10,16 @@ function getEnv(name: string): string {
 export function createSupabaseServerClient() {
   const cookieStore = cookies();
 
+  type CookieToSet = { name: string; value: string; options?: any };
+
   return createServerClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'), {
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: CookieToSet[]) {
         for (const { name, value, options } of cookiesToSet) cookieStore.set(name, value, options);
       },
     },
   });
 }
-

@@ -11,12 +11,14 @@ function getEnv(name: string): string {
 export async function updateSupabaseSession(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } });
 
+  type CookieToSet = { name: string; value: string; options?: any };
+
   const supabase = createServerClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'), {
     cookies: {
       getAll() {
         return request.cookies.getAll();
       },
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet: CookieToSet[]) {
         for (const { name, value, options } of cookiesToSet) {
           response.cookies.set(name, value, options);
         }
