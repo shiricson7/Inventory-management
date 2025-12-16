@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSupabaseSession } from '@/lib/supabase/middleware';
 
-const PROTECTED_PREFIXES = ['/dashboard', '/categories', '/items', '/transactions', '/setup', '/export'];
+const PROTECTED_PREFIXES = ['/dashboard', '/categories', '/items', '/transactions', '/setup', '/export', '/members', '/invite'];
 
 export async function middleware(request: NextRequest) {
   const { supabase, response } = await updateSupabaseSession(request);
@@ -29,4 +29,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };
-
