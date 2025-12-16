@@ -20,11 +20,7 @@ async function createClinicAction(formData: FormData) {
   const { data: existingMemberships } = await supabase.from('clinic_members').select('clinic_id').eq('user_id', user.id).limit(1);
   if (existingMemberships?.length) redirect('/dashboard');
 
-  const { data: clinic, error: clinicError } = await supabase
-    .from('clinics')
-    .insert({ name, created_by: user.id })
-    .select('id')
-    .single();
+  const { data: clinic, error: clinicError } = await supabase.from('clinics').insert({ name, created_by: user.id }).select('id').single();
   if (clinicError) redirect('/setup?error=' + encodeURIComponent('병의원 생성에 실패했어요.'));
 
   const clinicId = clinic.id as string;
@@ -48,42 +44,55 @@ async function createClinicAction(formData: FormData) {
   redirect('/dashboard');
 }
 
-export default async function SetupPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
+export default async function SetupPage({ searchParams }: { searchParams: { error?: string } }) {
   const { error } = searchParams;
+
   const supabase = createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
+  const { data: existingMemberships } = await supabase.from('clinic_members').select('clinic_id').eq('user_id', user.id).limit(1);
+  if (existingMemberships?.length) redirect('/dashboard');
+
   return (
-    <div className="panel" style={{ padding: 16 }}>
-      <h1 className="pageTitle">처음 설정</h1>
-      <p className="muted" style={{ marginTop: 0 }}>
-        병의원 이름을 입력하면 기본 카테고리(백신/외용제/성장클리닉 주사약)가 자동으로 만들어집니다.
-      </p>
+    <div className="w-full rounded-2xl border border-slate-200 bg-white/70 p-6 shadow-sm backdrop-blur">
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold tracking-tight text-slate-900">처음 설정</h1>
+        <p className="mt-2 text-sm text-slate-600">
+          병의원 이름을 입력하면 기본 카테고리(백신/외용제/성장클리닉 주사약)가 자동으로 만들어집니다.
+        </p>
+      </div>
 
       {error ? (
-        <div className="panel" style={{ padding: 12, borderColor: '#fecaca', background: '#fef2f2', marginBottom: 12 }}>
+        <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800" role="status">
           {error}
         </div>
       ) : null}
 
-      <form action={createClinicAction}>
-        <label className="label" htmlFor="name">
-          병의원 이름
-        </label>
-        <input className="input" id="name" name="name" required placeholder="예) ○○의원" />
+      <form action={createClinicAction} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700" htmlFor="name">
+            병의원 이름
+          </label>
+          <input
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+            id="name"
+            name="name"
+            required
+            placeholder="예) ○○의원"
+          />
+        </div>
 
-        <div style={{ height: 12 }} />
-        <button className="btn btnPrimary" type="submit">
+        <button
+          className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+          type="submit"
+        >
           시작하기
         </button>
       </form>
     </div>
   );
 }
+

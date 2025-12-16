@@ -38,72 +38,117 @@ export default async function LoginPage({
   const { error, message, next } = searchParams;
 
   return (
-    <div className="panel" style={{ padding: 16 }}>
-      <h1 className="pageTitle">병의원 재고관리 로그인</h1>
-      <p className="muted" style={{ marginTop: 0 }}>
-        이메일/비밀번호로 로그인합니다.
-      </p>
+    <div className="w-full max-w-2xl">
+      <div className="mb-6 text-center">
+        <h1 className="text-balance text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">병의원 재고관리</h1>
+        <p className="mt-2 text-sm text-slate-600">이메일/비밀번호로 로그인합니다.</p>
+      </div>
 
-      {error ? (
-        <div className="panel" style={{ padding: 12, borderColor: '#fecaca', background: '#fef2f2', marginBottom: 12 }}>
-          {error}
+      {(error || message) && (
+        <div
+          className={[
+            'mb-4 rounded-2xl border p-3 text-sm',
+            error ? 'border-rose-200 bg-rose-50 text-rose-800' : 'border-emerald-200 bg-emerald-50 text-emerald-800',
+          ].join(' ')}
+          role="status"
+        >
+          {error || message}
         </div>
-      ) : null}
-      {message ? (
-        <div className="panel" style={{ padding: 12, borderColor: '#bbf7d0', background: '#f0fdf4', marginBottom: 12 }}>
-          {message}
-        </div>
-      ) : null}
+      )}
 
-      <div className="grid2">
-        <form action={signInAction} className="panel" style={{ padding: 14 }}>
-          <h2 style={{ fontSize: 16, margin: '0 0 10px' }}>로그인</h2>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <form action={signInAction} className="rounded-2xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur">
+          <div className="mb-4">
+            <h2 className="text-base font-semibold text-slate-900">로그인</h2>
+            <p className="mt-1 text-xs text-slate-600">기존 계정으로 바로 시작하세요.</p>
+          </div>
+
           <input type="hidden" name="next" value={next || '/'} />
-          <label className="label" htmlFor="email">
+
+          <label className="block text-sm font-medium text-slate-700" htmlFor="email">
             이메일
           </label>
-          <input className="input" id="email" name="email" type="email" required autoComplete="email" />
+          <input
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            inputMode="email"
+            placeholder="name@example.com"
+          />
 
-          <div style={{ height: 10 }} />
-          <label className="label" htmlFor="password">
-            비밀번호
-          </label>
-          <input className="input" id="password" name="password" type="password" required autoComplete="current-password" />
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-slate-700" htmlFor="password">
+              비밀번호
+            </label>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+              id="password"
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              placeholder="••••••••"
+            />
+          </div>
 
-          <div style={{ height: 12 }} />
-          <button className="btn btnPrimary" type="submit" style={{ width: '100%' }}>
+          <button
+            className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-200"
+            type="submit"
+          >
             로그인
           </button>
         </form>
 
-        <form action={signUpAction} className="panel" style={{ padding: 14 }}>
-          <h2 style={{ fontSize: 16, margin: '0 0 10px' }}>회원가입</h2>
-          <label className="label" htmlFor="su_email">
+        <form action={signUpAction} className="rounded-2xl border border-slate-200 bg-white/70 p-5 shadow-sm backdrop-blur">
+          <div className="mb-4">
+            <h2 className="text-base font-semibold text-slate-900">회원가입</h2>
+            <p className="mt-1 text-xs text-slate-600">처음이라면 계정을 생성하세요.</p>
+          </div>
+
+          <label className="block text-sm font-medium text-slate-700" htmlFor="su_email">
             이메일
           </label>
-          <input className="input" id="su_email" name="email" type="email" required autoComplete="email" />
-
-          <div style={{ height: 10 }} />
-          <label className="label" htmlFor="su_password">
-            비밀번호
-          </label>
           <input
-            className="input"
-            id="su_password"
-            name="password"
-            type="password"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+            id="su_email"
+            name="email"
+            type="email"
             required
-            autoComplete="new-password"
-            minLength={8}
+            autoComplete="email"
+            inputMode="email"
+            placeholder="name@example.com"
           />
-          <div className="help">내부 사용이라면 간단한 비밀번호도 가능하지만, 최소 8자 권장입니다.</div>
 
-          <div style={{ height: 12 }} />
-          <button className="btn" type="submit" style={{ width: '100%' }}>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-slate-700" htmlFor="su_password">
+              비밀번호
+            </label>
+            <input
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+              id="su_password"
+              name="password"
+              type="password"
+              required
+              autoComplete="new-password"
+              minLength={8}
+              placeholder="최소 8자"
+            />
+            <p className="mt-2 text-xs text-slate-600">내부 사용이라면 간단한 비밀번호도 가능하지만, 최소 8자 권장입니다.</p>
+          </div>
+
+          <button
+            className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100"
+            type="submit"
+          >
             회원가입
           </button>
         </form>
       </div>
+
+      <p className="mt-6 text-center text-xs text-slate-500">로그인 후 처음 1회는 병의원 정보를 설정합니다.</p>
     </div>
   );
 }
