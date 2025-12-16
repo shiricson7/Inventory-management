@@ -31,6 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Link href="/transactions">입출고</Link>
           <Link href="/categories">카테고리</Link>
           {isOwner ? <Link href="/members">멤버</Link> : null}
+          <Link href="/settings">설정</Link>
         </nav>
 
         <div className="mt-6 rounded-xl border border-slate-200 bg-white/70 p-3 text-xs text-slate-600">
