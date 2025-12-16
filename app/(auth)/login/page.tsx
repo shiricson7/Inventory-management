@@ -22,12 +22,16 @@ async function signUpAction(formData: FormData) {
   'use server';
   const email = getString(formData.get('email'));
   const password = getString(formData.get('password'));
+  const next = getString(formData.get('next')) || '/';
 
   const supabase = createSupabaseServerClient();
   const { error } = await supabase.auth.signUp({ email, password });
-  if (error) redirect(`/login?error=${encodeURIComponent('회원가입에 실패했어요. 다른 이메일을 사용해보세요.')}`);
+  if (error) redirect(`/login?error=${encodeURIComponent('회원가입에 실패했어요. 다른 이메일을 사용해보세요.')}&next=${encodeURIComponent(next)}`);
 
-  redirect(`/login?message=${encodeURIComponent('회원가입이 완료됐어요. 로그인 해주세요.')}`);
+  const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+  if (signInError) redirect(`/login?message=${encodeURIComponent('회원가입이 완료됐어요. 로그인 해주세요.')}&next=${encodeURIComponent(next)}`);
+
+  redirect(next);
 }
 
 export default async function LoginPage({
@@ -107,6 +111,8 @@ export default async function LoginPage({
             <h2 className="text-base font-semibold text-slate-900">회원가입</h2>
             <p className="mt-1 text-xs text-slate-600">처음이라면 계정을 생성하세요.</p>
           </div>
+
+          <input type="hidden" name="next" value={next || '/'} />
 
           <label className="block text-sm font-medium text-slate-700" htmlFor="su_email">
             이메일
